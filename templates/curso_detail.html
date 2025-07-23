@@ -1,0 +1,95 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8">
+            <h1>{{ course.title }}</h1>
+            <p class="lead">{{ course.description }}</p>
+
+            <div class="d-flex gap-3 mb-4">
+                <span class="badge bg-primary">{{ course.level }}</span>
+                <span class="text-muted"><i class="fas fa-clock"></i> {{ course.duration }} horas</span>
+                <span class="text-muted"><i class="fas fa-users"></i> {{ course.purchases|length }} alunos</span>
+            </div>
+
+            {% if purchase %}
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h3 class="card-title mb-0">Curso Comprado</h3>
+                            <p class="text-muted mb-0">Comprado em {{ purchase.purchase_date.strftime('%d/%m/%Y') }}</p>
+                        </div>
+                        <a href="{{ url_for('aula_detail', course_id=course.id, lesson_id=course.modules[0].lessons[0].id) }}"
+                            class="btn btn-primary btn-lg">
+                            <i class="fas fa-play"></i> Continuar Curso
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h3 class="card-title">R$ {{ "%.2f"|format(course.price) }}</h3>
+                    <form action="{{ url_for('comprar_curso', course_id=course.id) }}" method="POST">
+                        <button type="submit" class="btn btn-primary btn-lg">Comprar Curso</button>
+                    </form>
+                </div>
+            </div>
+            {% endif %}
+
+            <h2 class="mb-4">Conteúdo do Curso</h2>
+            {% for module in course.modules %}
+            <div class="card mb-3">
+                <div class="card-header">
+                    <h3 class="h5 mb-0">{{ module.title }}</h3>
+                </div>
+                <div class="card-body">
+                    <p>{{ module.description }}</p>
+                    <div class="list-group">
+                        {% for lesson in module.lessons %}
+                        <a href="{{ url_for('aula_detail', course_id=course.id, lesson_id=lesson.id) }}"
+                            class="list-group-item list-group-item-action {% if purchase %}active{% endif %}">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="mb-1">{{ lesson.title }}</h6>
+                                    <small class="text-muted">{{ lesson.duration }} minutos</small>
+                                </div>
+                                {% if purchase %}
+                                <i class="fas fa-play-circle"></i>
+                                {% else %}
+                                <i class="fas fa-lock"></i>
+                                {% endif %}
+                            </div>
+                        </a>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="col-md-4">
+            {% if course.image %}
+            <img src="{{ url_for('static', filename='uploads/' + course.image) }}" class="img-fluid rounded mb-4"
+                alt="{{ course.title }}">
+            {% endif %}
+
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title">O que você vai aprender</h4>
+                    <ul class="list-unstyled">
+                        {% for module in course.modules %}
+                        <li class="mb-2">
+                            <i class="fas fa-check text-success me-2"></i>
+                            {{ module.title }}
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

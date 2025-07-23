@@ -1,0 +1,96 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ url_for('meus_cursos') }}">Meus Cursos</a></li>
+                    <li class="breadcrumb-item"><a href="{{ url_for('curso_detail', course_id=course.id) }}">{{
+                            course.title }}</a></li>
+                    <li class="breadcrumb-item active">{{ lesson.title }}</li>
+                </ol>
+            </nav>
+
+            <h1 class="mb-4">{{ lesson.title }}</h1>
+
+            {% if lesson.video_url %}
+            <div class="ratio ratio-16x9 mb-4">
+                <iframe src="{{ lesson.video_url }}" title="{{ lesson.title }}" allowfullscreen></iframe>
+            </div>
+            {% endif %}
+
+            <div class="card mb-4">
+                <div class="card-body">
+                    {{ lesson.content|safe }}
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <span class="text-muted">
+                        <i class="fas fa-clock"></i> {{ lesson.duration }} minutos
+                    </span>
+                </div>
+                <div>
+                    <button class="btn btn-success" onclick="markAsCompleted()">
+                        <i class="fas fa-check"></i> Marcar como concluída
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Conteúdo do Curso</h5>
+                </div>
+                <div class="list-group list-group-flush">
+                    {% for module in course.modules %}
+                    <div class="list-group-item">
+                        <h6 class="mb-2">{{ module.title }}</h6>
+                        <div class="list-group">
+                            {% for module_lesson in module.lessons %}
+                            <a href="{{ url_for('aula_detail', course_id=course.id, lesson_id=module_lesson.id) }}"
+                                class="list-group-item list-group-item-action {% if module_lesson.id == lesson.id %}active{% endif %}">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <small>{{ module_lesson.title }}</small>
+                                        <br>
+                                        <small class="text-muted">{{ module_lesson.duration }} minutos</small>
+                                    </div>
+                                    {% if module_lesson.completed %}
+                                    <i class="fas fa-check-circle text-success"></i>
+                                    {% endif %}
+                                </div>
+                            </a>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block scripts %}
+<script>
+    function markAsCompleted() {
+        fetch(`/aula/${lesson.id}/completar`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    location.reload();
+                }
+            });
+    }
+</script>
+{% endblock %}
+{% endblock %}

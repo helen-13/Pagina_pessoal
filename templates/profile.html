@@ -1,0 +1,48 @@
+{% extends "layout.html" %}
+
+{% block title %}Perfil - {{ username }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="profile-section">
+        <div class="profile-header">
+            <h2>Perfil do Usuário</h2>
+            {% if current_user.username == username %}
+            <div class="profile-actions">
+                <a href="{{ url_for('editar_perfil') }}" class="btn btn-primary">Editar Perfil</a>
+                <a href="{{ url_for('alterar_senha') }}" class="btn btn-secondary">Alterar Senha</a>
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="profile-info">
+            <div class="profile-avatar">
+                {% if user.avatar %}
+                <img src="{{ url_for('static', filename='uploads/' + user.avatar) }}" alt="Avatar de {{ username }}">
+                {% else %}
+                <div class="default-avatar">{{ user.username[0].upper() }}</div>
+                {% endif %}
+            </div>
+
+            <div class="profile-details">
+                <p><strong>Nome de Usuário:</strong> {{ username }}</p>
+                <p><strong>Email:</strong> {{ user.email }}</p>
+                <p><strong>Membro desde:</strong> {{ user.created_at.strftime('%d/%m/%Y') }}</p>
+                {% if user.bio %}
+                <div class="profile-bio">
+                    <h3>Biografia</h3>
+                    <p>{{ user.bio }}</p>
+                </div>
+                {% endif %}
+                <div class="profile-actions">
+                    <a href="{{ url_for('cursos') }}" class="btn btn-primary">Ver Cursos</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+{% endblock %}

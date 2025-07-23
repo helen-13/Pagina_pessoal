@@ -1,0 +1,93 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="mb-0">Agendar Mentoria</h2>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('mentorias') }}">
+                        {{ form.hidden_tag() }}
+
+                        <div class="mb-3">
+                            {{ form.date.label(class="form-label") }}
+                            {{ form.date(class="form-control", type="datetime-local") }}
+                            {% if form.date.errors %}
+                            <div class="invalid-feedback d-block">
+                                {% for error in form.date.errors %}
+                                {{ error }}
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form.duration.label(class="form-label") }}
+                            {{ form.duration(class="form-control") }}
+                            {% if form.duration.errors %}
+                            <div class="invalid-feedback d-block">
+                                {% for error in form.duration.errors %}
+                                {{ error }}
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form.notes.label(class="form-label") }}
+                            {{ form.notes(class="form-control", rows=4) }}
+                            {% if form.notes.errors %}
+                            <div class="invalid-feedback d-block">
+                                {% for error in form.notes.errors %}
+                                {{ error }}
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                            <div class="form-text">
+                                Descreva os tópicos que você gostaria de discutir durante a mentoria.
+                            </div>
+                        </div>
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">Agendar Mentoria</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h3 class="mb-0">Minhas Mentorias</h3>
+                </div>
+                <div class="list-group list-group-flush">
+                    {% for session in sessions %}
+                    <div class="list-group-item">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h5 class="mb-1">{{ session.date.strftime('%d/%m/%Y %H:%M') }}</h5>
+                                <p class="mb-1 text-muted">
+                                    Duração: {{ session.duration }} minutos
+                                </p>
+                                {% if session.notes %}
+                                <p class="mb-0">{{ session.notes }}</p>
+                                {% endif %}
+                            </div>
+                            <span class="badge bg-{{ 'success' if session.date > now else 'secondary' }}">
+                                {{ 'Agendada' if session.date > now else 'Concluída' }}
+                            </span>
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="list-group-item text-center text-muted">
+                        Nenhuma mentoria agendada.
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

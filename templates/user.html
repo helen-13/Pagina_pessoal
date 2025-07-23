@@ -1,0 +1,18 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="container">
+    <div class="profile-section">
+        <h2>Perfil do Usuário</h2>
+        <div class="profile-info">
+            <p><strong>Nome de Usuário:</strong> {{ username }}</p>
+            <p><strong>Email:</strong> {{ user.email }}</p>
+        </div>
+
+        <div class="profile-actions">
+            <a href="{{ url_for('editar_perfil') }}" class="btn btn-primary">Editar Perfil</a>
+            <a href="{{ url_for('alterar_senha') }}" class="btn btn-secondary">Alterar Senha</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

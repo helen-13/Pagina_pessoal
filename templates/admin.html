@@ -1,0 +1,71 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="container">
+    <h2>Painel de Administração</h2>
+
+    <div class="admin-stats">
+        <div class="stat-card">
+            <h3>Total de Usuários</h3>
+            <p>{{ users|length }}</p>
+        </div>
+    </div>
+
+    <div class="user-list">
+        <h3>Lista de Usuários</h3>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Usuário</th>
+                    <th>Email</th>
+                    <th>Data de Cadastro</th>
+                    <th>Último Login</th>
+                    <th>Admin</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                <tr>
+                    <td>{{ user.id }}</td>
+                    <td>{{ user.username }}</td>
+                    <td>{{ user.email }}</td>
+                    <td>{{ user.created_at.strftime('%d/%m/%Y %H:%M') }}</td>
+                    <td>{{ user.last_login.strftime('%d/%m/%Y %H:%M') if user.last_login else 'Nunca' }}</td>
+                    <td>{{ 'Sim' if user.is_admin else 'Não' }}</td>
+                    <td>
+                        <a href="{{ url_for('show_user_profile', username=user.username) }}"
+                            class="btn btn-sm btn-info">Ver</a>
+                        <button class="btn btn-sm btn-warning" onclick="toggleAdmin({{ user.id }})">
+                            {{ 'Remover Admin' if user.is_admin else 'Tornar Admin' }}
+                        </button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    function toggleAdmin(userId) {
+        if (confirm('Tem certeza que deseja alterar o status de administrador deste usuário?')) {
+            fetch(`/admin/toggle/${userId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        location.reload();
+                    } else {
+                        alert('Erro ao alterar status de administrador');
+                    }
+                });
+        }
+    }
+</script>
+{% endblock %}

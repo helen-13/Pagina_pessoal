@@ -1,0 +1,25 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="container">
+    <h2>Alterar Senha</h2>
+    <form method="post" action="{{ url_for('alterar_senha') }}" class="cadastro-form">
+        {{ form.csrf_token }}
+        <div class="form-group">
+            {{ form.password.label }}
+            {{ form.password(class="form-control") }}
+            {% if form.password.errors %}
+            {% for error in form.password.errors %}
+            <span class="error">{{ error }}</span>
+            {% endfor %}
+            {% endif %}
+        </div>
+
+        {{ form.submit(class="btn btn-primary") }}
+    </form>
+    <div class="mt-3">
+        <a href="{{ url_for('show_user_profile', username=current_user.username) }}"
+            class="btn btn-secondary">Voltar</a>
+    </div>
+</div>
+{% endblock %}

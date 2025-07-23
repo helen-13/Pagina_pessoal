@@ -1,0 +1,58 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="mb-4">Nossos Cursos</h1>
+
+    <div class="row">
+        {% for course in courses %}
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                {% if course.image %}
+                <img src="{{ url_for('static', filename='uploads/' + course.image) }}" class="card-img-top"
+                    alt="{{ course.title }}">
+                {% else %}
+                <img src="{{ url_for('static', filename='img/default-course.jpg') }}" class="card-img-top"
+                    alt="Curso padrão">
+                {% endif %}
+
+                <div class="card-body">
+                    <h5 class="card-title">{{ course.title }}</h5>
+                    <p class="card-text">{{ course.description[:150] }}...</p>
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span class="badge bg-primary">{{ course.level }}</span>
+                        <span class="text-muted">{{ course.duration }} horas</span>
+                    </div>
+                </div>
+
+                <div class="card-footer bg-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h4 class="mb-0">R$ {{ "%.2f"|format(course.price) }}</h4>
+                        {% if current_user.is_authenticated %}
+                        {% if course.id in purchases %}
+                        <a href="{{ url_for('aula_detail', course_id=course.id, lesson_id=course.modules[0].lessons[0].id) }}"
+                            class="btn btn-primary">
+                            <i class="fas fa-play"></i> Continuar Curso
+                        </a>
+                        {% else %}
+                        <form action="{{ url_for('comprar_curso', course_id=course.id) }}" method="POST"
+                            class="d-inline">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-shopping-cart"></i> Comprar Curso
+                            </button>
+                        </form>
+                        {% endif %}
+                        {% else %}
+                        <a href="{{ url_for('login', next=url_for('curso_detail', course_id=course.id)) }}"
+                            class="btn btn-primary">
+                            <i class="fas fa-lock"></i> Fazer Login para Comprar
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
