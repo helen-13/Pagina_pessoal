@@ -73,4 +73,4 @@ Este projeto é uma plataforma de cursos online desenvolvida com Flask, SQLAlche
 
 ---
 
-Desenvolvido por [Seu Nome]. 
+Desenvolvido por HELEN FREIRE. 
