@@ -1,0 +1,58 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="mb-0">Cursos</h2>
+        <a href="{{ url_for('novo_curso') }}" class="btn btn-primary">Novo Curso</a>
+    </div>
+
+    {% if courses %}
+    <div class="table-responsive">
+        <table class="table table-striped align-middle">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Título</th>
+                    <th>Nível</th>
+                    <th>Duração</th>
+                    <th>Preço</th>
+                    <th>Destaque</th>
+                    <th class="text-end">Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for course in courses %}
+                <tr>
+                    <td>{{ course.id }}</td>
+                    <td><a href="{{ url_for('curso_detail', course_id=course.id) }}">{{ course.title }}</a></td>
+                    <td>{{ course.level or '-' }}</td>
+                    <td>{{ course.duration or '-' }}</td>
+                    <td>R$ {{ '%.2f'|format(course.price) if course.price is not none else '-' }}</td>
+                    <td>
+                        {% if course.is_featured %}
+                        <span class="badge bg-success">Sim</span>
+                        {% else %}
+                        <span class="badge bg-secondary">Não</span>
+                        {% endif %}
+                    </td>
+                    <td class="text-end">
+                        <div class="btn-group">
+                            <a href="{{ url_for('editar_curso', course_id=course.id) }}" class="btn btn-sm btn-outline-secondary">Editar</a>
+                            <form action="{{ url_for('deletar_curso', course_id=course.id) }}" method="POST" onsubmit="return confirm('Excluir este curso? Esta ação não pode ser desfeita.');">
+                                <button type="submit" class="btn btn-sm btn-outline-danger">Excluir</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="alert alert-info">Nenhum curso cadastrado ainda.</div>
+    {% endif %}
+</div>
+{% endblock %}
+
+

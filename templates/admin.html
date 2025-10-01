@@ -9,6 +9,54 @@
             <h3>Total de Usuários</h3>
             <p>{{ users|length }}</p>
         </div>
+        <div class="stat-card">
+            <h3>Total de Cursos</h3>
+            <p>{{ courses|length }}</p>
+        </div>
+    </div>
+
+    <div class="mb-4">
+        <div class="d-flex justify-content-between align-items-center">
+            <h3 class="mb-0">Cursos</h3>
+            <a href="{{ url_for('novo_curso') }}" class="btn btn-primary btn-sm">Novo Curso</a>
+        </div>
+        {% if courses %}
+        <div class="table-responsive mt-3">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Título</th>
+                        <th>Nível</th>
+                        <th>Duração</th>
+                        <th>Preço</th>
+                        <th class="text-end">Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for course in courses %}
+                    <tr>
+                        <td>{{ course.id }}</td>
+                        <td>{{ course.title }}</td>
+                        <td>{{ course.level }}</td>
+                        <td>{{ course.duration }} h</td>
+                        <td>R$ {{ '%.2f'|format(course.price) }}</td>
+                        <td class="text-end">
+                            <div class="btn-group">
+                                <a href="{{ url_for('editar_curso', course_id=course.id) }}" class="btn btn-sm btn-outline-secondary">Editar</a>
+                                <form method="POST" action="{{ url_for('deletar_curso', course_id=course.id) }}" onsubmit="return confirm('Excluir este curso? Esta ação não pode ser desfeita.');">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger">Excluir</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="alert alert-info mt-3">Nenhum curso cadastrado.</div>
+        {% endif %}
     </div>
 
     <div class="user-list">

@@ -5,7 +5,17 @@ from datetime import datetime
 def init_courses():
     with app.app_context():
         # Criar cursos
-        word_course = Course(
+        # Evita duplicar cursos ao rodar múltiplas vezes
+        def get_or_create_course(**kwargs):
+            existing = Course.query.filter_by(title=kwargs.get('title')).first()
+            if existing:
+                return existing
+            course = Course(**kwargs)
+            db.session.add(course)
+            db.session.commit()
+            return course
+
+        word_course = get_or_create_course(
             title='Microsoft Word - Do Básico ao Avançado',
             description='Aprenda a usar o Microsoft Word de forma profissional, desde o básico até recursos avançados.',
             price=197.00,
@@ -14,7 +24,7 @@ def init_courses():
             image='word-course.jpg'
         )
         
-        canva_course = Course(
+        canva_course = get_or_create_course(
             title='Canva - Design Gráfico para Iniciantes',
             description='Crie designs profissionais com o Canva, mesmo sem experiência em design gráfico.',
             price=147.00,
@@ -23,7 +33,7 @@ def init_courses():
             image='canva-course.jpg'
         )
         
-        ai_course = Course(
+        ai_course = get_or_create_course(
             title='Inteligência Artificial para Negócios',
             description='Entenda como aplicar IA em seu negócio e aumentar sua produtividade.',
             price=297.00,
@@ -31,8 +41,16 @@ def init_courses():
             level='Intermediário',
             image='ai-course.jpg'
         )
+
+        ia_educacao_course = get_or_create_course(
+            title='IA e Educação',
+            description='Explore como a Inteligência Artificial transforma o ensino e a aprendizagem, com práticas e ferramentas.',
+            price=247.00,
+            duration=18,
+            level='Intermediário'
+        )
         
-        db.session.add_all([word_course, canva_course, ai_course])
+        # Garante persistência inicial (get_or_create já comita, mas mantemos por consistência)
         db.session.commit()
         
         # Módulos do curso de Word
@@ -79,7 +97,7 @@ def init_courses():
             )
         ]
         
-        # Módulos do curso de IA
+        # Módulos do curso de IA para Negócios
         ai_modules = [
             Module(
                 title='Fundamentos de IA',
@@ -100,8 +118,20 @@ def init_courses():
                 course_id=ai_course.id
             )
         ]
+
+        # Módulos do curso de IA e Educação
+        ia_educacao_modules = []
+        if not ia_educacao_course.modules:
+            ia_educacao_modules = [
+                Module(
+                    title='IA na Sala de Aula',
+                    description='Cenários de uso de IA no ensino e aprendizagem.',
+                    order=1,
+                    course_id=ia_educacao_course.id
+                )
+            ]
         
-        db.session.add_all(word_modules + canva_modules + ai_modules)
+        db.session.add_all(word_modules + canva_modules + ai_modules + ia_educacao_modules)
         db.session.commit()
         
         # Aulas do curso de Word
@@ -144,7 +174,7 @@ def init_courses():
             )
         ]
         
-        # Aulas do curso de IA
+        # Aulas do curso de IA para Negócios
         ai_lessons = [
             Lesson(
                 title='O que é IA?',
@@ -163,8 +193,22 @@ def init_courses():
                 module_id=ai_modules[0].id
             )
         ]
+
+        # Aulas do curso de IA e Educação (garante ao menos uma aula para navegação)
+        ia_educacao_lessons = []
+        if ia_educacao_modules:
+            ia_educacao_lessons = [
+                Lesson(
+                    title='Introdução: IA para ensinar e aprender',
+                    content='<p>Panorama de ferramentas e práticas com IA na educação.</p>',
+                    video_url='https://www.youtube.com/embed/example7',
+                    duration=30,
+                    order=1,
+                    module_id=ia_educacao_modules[0].id
+                )
+            ]
         
-        db.session.add_all(word_lessons + canva_lessons + ai_lessons)
+        db.session.add_all(word_lessons + canva_lessons + ai_lessons + ia_educacao_lessons)
         db.session.commit()
         
         print('Cursos, módulos e aulas criados com sucesso!')

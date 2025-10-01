@@ -1,0 +1,148 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-lg-7">
+            <div class="card mb-4">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h2 class="mb-0">Editar Curso</h2>
+                    <a href="{{ url_for('admin_cursos') }}" class="btn btn-sm btn-secondary">Voltar</a>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('editar_curso', course_id=course.id) }}" enctype="multipart/form-data">
+                        {{ form.hidden_tag() }}
+
+                        <div class="mb-3">
+                            {{ form.title.label(class="form-label") }}
+                            {{ form.title(class="form-control") }}
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form.description.label(class="form-label") }}
+                            {{ form.description(class="form-control", rows=4) }}
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    {{ form.price.label(class="form-label") }}
+                                    <div class="input-group">
+                                        <span class="input-group-text">R$</span>
+                                        {{ form.price(class="form-control") }}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    {{ form.duration.label(class="form-label") }}
+                                    <div class="input-group">
+                                        {{ form.duration(class="form-control") }}
+                                        <span class="input-group-text">horas</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    {{ form.level.label(class="form-label") }}
+                                    {{ form.level(class="form-select") }}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    {{ form.is_featured.label(class="form-label") }}
+                                    <div class="form-check">
+                                        {{ form.is_featured(class="form-check-input") }}
+                                        <label class="form-check-label" for="is_featured">Destacar na home</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form.image.label(class="form-label") }}
+                            {{ form.image(class="form-control") }}
+                            {% if course.image %}
+                            <small class="text-muted">Imagem atual: {{ course.image }}</small>
+                            {% endif %}
+                        </div>
+
+                        <div class="d-flex justify-content-end gap-2">
+                            <a href="{{ url_for('admin_cursos') }}" class="btn btn-secondary">Cancelar</a>
+                            <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-5">
+            <div class="card mb-4">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h3 class="mb-0">Módulos</h3>
+                    <a href="{{ url_for('novo_modulo', course_id=course.id) }}" class="btn btn-sm btn-outline-primary">
+                        Novo módulo
+                    </a>
+                </div>
+                <div class="list-group list-group-flush">
+                    {% if course.modules %}
+                        {% for module in course.modules %}
+                        <div class="list-group-item">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h5 class="mb-1">{{ module.title }}</h5>
+                                    <small class="text-muted">{{ module.lessons|length }} aulas</small>
+                                </div>
+                                <div class="btn-group">
+                                    <a href="{{ url_for('nova_aula', module_id=module.id) }}" class="btn btn-sm btn-outline-secondary">Nova aula</a>
+                                    <button type="button" class="btn btn-sm btn-outline-danger" onclick="deleteModule({{ module.id }})">Excluir</button>
+                                </div>
+                            </div>
+                            {% if module.description %}
+                            <p class="mb-0 mt-2 text-muted">{{ module.description }}</p>
+                            {% endif %}
+                            {% if module.lessons %}
+                            <ul class="mt-2 mb-0 small">
+                                {% for lesson in module.lessons %}
+                                <li class="d-flex justify-content-between align-items-center">
+                                    <span>{{ lesson.title }}</span>
+                                    <button type="button" class="btn btn-sm btn-outline-danger" onclick="deleteLesson({{ lesson.id }})">Excluir aula</button>
+                                </li>
+                                {% endfor %}
+                            </ul>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="list-group-item text-muted">Nenhum módulo cadastrado.</div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block scripts %}
+<script>
+    function deleteModule(moduleId) {
+        if (confirm('Excluir este módulo e todas as aulas?')) {
+            fetch(`/admin/modulo/${moduleId}/excluir`, { method: 'POST', headers: { 'Content-Type': 'application/json' } })
+                .then(r => r.json())
+                .then(d => { if (d.success) location.reload(); });
+        }
+    }
+    function deleteLesson(lessonId) {
+        if (confirm('Excluir esta aula?')) {
+            fetch(`/admin/aula/${lessonId}/excluir`, { method: 'POST', headers: { 'Content-Type': 'application/json' } })
+                .then(r => r.json())
+                .then(d => { if (d.success) location.reload(); });
+        }
+    }
+</script>
+{% endblock %}
+{% endblock %}
+
+

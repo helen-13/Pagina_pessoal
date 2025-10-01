@@ -90,4 +90,4 @@ class Mentorship(db.Model):
     status = db.Column(db.String(20), default='pending')  # pending, approved, rejected
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     scheduled_date = db.Column(db.DateTime)
-    notes = db.Column(db.Text) 
+    notes = db.Column(db.Text)

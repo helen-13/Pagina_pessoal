@@ -405,10 +405,48 @@ footer p {
 /* Navbar */
 .navbar {
     box-shadow: 0 2px 4px rgba(0, 0, 0, .1);
+    background-image: linear-gradient(rgba(255, 255, 255, .65), rgba(255, 255, 255, .65)), url('imagem/faixa.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
 }
 
 .navbar-brand img {
-    max-height: 40px;
+    max-height: 44px;
+}
+
+/* Contraste do texto do menu sobre a imagem */
+.navbar .navbar-brand,
+.navbar .nav-link,
+.navbar .dropdown-item {
+    color: #3f3771 !important;
+    /* azul do tema/desenho */
+    font-weight: 600;
+}
+
+.navbar .nav-link:hover,
+.navbar .dropdown-item:hover {
+    color: #2e295c !important;
+}
+
+/* Botão hamburguer claro */
+.navbar .navbar-toggler {
+    border-color: rgba(63, 55, 113, .55);
+}
+
+.navbar .navbar-toggler-icon {
+    background-image: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='rgba(63,55,113, 0.85)' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E");
+}
+
+/* Esconde o banner separado, já que a imagem está no menu */
+.header-banner {
+    display: none;
+}
+
+.header-banner img {
+    width: 100%;
+    height: auto;
+    display: block;
 }
 
 /* Cards */

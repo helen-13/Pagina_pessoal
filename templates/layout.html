@@ -16,8 +16,9 @@
     {% block navbar %}
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container">
-            <a class="navbar-brand" href="{{ url_for('home') }}">
-                <i class="fas fa-graduation-cap"></i> Plataforma de Cursos
+            <a class="navbar-brand d-flex align-items-center gap-2" href="{{ url_for('home') }}">
+                <img src="{{ url_for('static', filename='imagem/logo.png') }}" alt="Logo" />
+                <span>Plataforma de Cursos</span>
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
@@ -99,6 +100,11 @@
             </div>
         </div>
     </nav>
+
+    <!-- Banner topo -->
+    <div class="header-banner">
+        <img src="{{ url_for('static', filename='imagem/faixa.jpg') }}" alt="Banner" class="img-fluid w-100">
+    </div>
     {% endblock %}
 
     {% block content %}
@@ -133,7 +139,7 @@
             </div>
 
             <div class="copyright">
-                <p>&copy; 2024 Plataforma de Cursos. Todos os direitos reservados.</p>
+                <p>&copy; 2025 Plataforma de Cursos. Todos os direitos reservados.</p>
             </div>
         </div>
     </footer>

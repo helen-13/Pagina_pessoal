@@ -13,6 +13,7 @@ import os
 from werkzeug.utils import secure_filename
 from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
+import click
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'sua-chave-secreta'
@@ -446,6 +447,23 @@ def completar_aula(lesson_id):
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+# CLI: cria superusuário (admin)
+@app.cli.command('createsuperuser')
+@click.option('--username', prompt=True, help='Nome de usuário (único)')
+@click.option('--email', prompt=True, help='Email do usuário (único)')
+@click.option('--password', prompt=True, hide_input=True, confirmation_prompt=True, help='Senha do usuário')
+def create_super_user(username, email, password):
+    """Cria um usuário administrador com is_admin=True."""
+    existing_user = User.query.filter((User.username == username) | (User.email == email)).first()
+    if existing_user:
+        click.echo('Usuário com este username ou email já existe.')
+        return
+    user = User(username=username, email=email, is_admin=True)
+    user.set_password(password)
+    db.session.add(user)
+    db.session.commit()
+    click.echo('Superusuário criado com sucesso!')
 
 if __name__ == "__main__":
     with app.app_context():
